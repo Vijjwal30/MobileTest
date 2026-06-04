@@ -14,28 +14,33 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Java 21 Tooling Environment
+      - name: Setup Official Gluon GraalVM
+        # Points directly to the master branch since Gluon doesn't use v1 tags
+        uses: gluonhq/setup-graalvm@master
+        with:
+          # Maps precisely to the internal API strings expected by Gluon Substrate
+          graalvm: '22.1.0.1-Final'
+          jdk: 'java17'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Java Tooling Fallback
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Setup Official Gluon GraalVM
-        # Corrected action repository name
-        uses: gluonhq/setup-graalvm@v1
-        with:
-          # Pulls the exact custom GraalVM fork built specifically for mobile substrates
-          release: 'latest'
-
-      - name: Install Android Native Dependencies
+      - name: Install Android Native System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
+          sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev
 
       - name: Compile and Package Android APK
-        # Runs clean compile inside the verified environment sandbox
-        run: mvn clean gluonfx:build gluonfx:package -Pandroid
+        # Forces the environment variables to align explicitly with the Android target architecture
+        run: |
+          export ANDROID_SDK=$ANDROID_HOME
+          mvn clean gluonfx:build gluonfx:package -Pandroid
 
       - name: Upload Android Package Artifact
         uses: actions/upload-artifact@v4
