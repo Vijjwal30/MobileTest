@@ -35,9 +35,6 @@ jobs:
           sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev
 
       - name: Compile and Package Android APK
-        # MAVEN_OPTS environment variable safely disables the broken container metrics check
-        env:
-          MAVEN_OPTS: "-Djdk.internal.platform.container=none"
         run: |
           export ANDROID_SDK=$ANDROID_HOME
           mvn clean gluonfx:build gluonfx:package -Pandroid
