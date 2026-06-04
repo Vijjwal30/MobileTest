@@ -14,19 +14,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Official Gluon GraalVM
-        uses: gluonhq/setup-graalvm@master
-        with:
-          graalvm: '22.1.0.1-Final'
-          jdk: 'java17'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup Java Tooling Fallback
-        uses: actions/setup-java@v4
+      - name: Setup Patched Mobile GraalVM Toolchain
+        # Bypassing the buggy gluonhq action completely to fix the cgroups crash
+        uses: graalvm/setup-graalvm@v1
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
 
       - name: Install Android Native System Dependencies
@@ -35,15 +29,8 @@ jobs:
           sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev
 
       - name: Compile and Package Android APK
-        env:
-          ANDROID_SDK: ${{ env.ANDROID_HOME }}
-          # This environment variable explicitly forces GraalVM to drop container metric tracking
-          GRAALVM_ARGS: "-Djdk.internal.platform.container=none"
+        # The GRAALVM_HOME variable tells the gluonfx plugin to use this patched environment
         run: |
+          export GRAALVM_HOME=$JAVA_HOME
+          export ANDROID_SDK=$ANDROID_HOME
           mvn clean gluonfx:build gluonfx:package -Pandroid
-
-      - name: Upload Android Package Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: target/gluonfx/aarch64-android/gvm/*.apk
