@@ -8,8 +8,7 @@ on:
 
 jobs:
   build-android:
-    # Downgrading to 20.04 uses cgroups v1, which completely prevents the NullPointerException
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
@@ -36,8 +35,11 @@ jobs:
           sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev
 
       - name: Compile and Package Android APK
+        env:
+          ANDROID_SDK: ${{ env.ANDROID_HOME }}
+          # This environment variable explicitly forces GraalVM to drop container metric tracking
+          GRAALVM_ARGS: "-Djdk.internal.platform.container=none"
         run: |
-          export ANDROID_SDK=$ANDROID_HOME
           mvn clean gluonfx:build gluonfx:package -Pandroid
 
       - name: Upload Android Package Artifact
