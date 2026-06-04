@@ -14,31 +14,41 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Patched Gluon GraalVM
-        # This action sets up the correct cross-compilation caches for Android
+      - name: Setup Gluon's GraalVM
         uses: gluonhq/setup-graalvm@master
         with:
-          # Upgrading from 22.1 to 22.3 brings in the native patch for cgroups v2
-          graalvm: '22.3.r17-HotSpot'
+          graalvm: '22.1.0.1-Final'
           jdk: 'java17'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Java Tooling Fallback
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
           distribution: 'temurin'
+          java-version: '17'
           cache: 'maven'
 
-      - name: Install Android Native System Dependencies
+      - name: Setup Android NDK
+        # Gluon's build infrastructure requires an explicit Android NDK toolchain link
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r28c
+          add-to-path: false
+
+      - name: Install Native Tooling Libraries
         run: |
           sudo apt-get update
           sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev
 
       - name: Compile and Package Android APK
+        # The GRAALVM_ARGS flag forces Gluon Substrate to skip the broken cgroups tracking code
+        env:
+          ANDROID_SDK: ${{ env.ANDROID_HOME }}
+          ANDROID_NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+          GRAALVM_ARGS: "-Djdk.internal.platform.container=none"
         run: |
-          export ANDROID_SDK=$ANDROID_HOME
           mvn clean gluonfx:build gluonfx:package -Pandroid
 
       - name: Upload Android Package Artifact
