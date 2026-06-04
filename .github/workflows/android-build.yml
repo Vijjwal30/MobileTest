@@ -1,0 +1,43 @@
+name: Build Android App (Java 25 / JavaFX 26 - Maven)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 25 Environment
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'oracle' # Fallback to standard Oracle OpenJDK for tooling environment
+          cache: 'maven'
+
+      - name: Setup Gluon Mobile-Optimized GraalVM
+        uses: gluonhq/setup-gluon-graalvm@v1
+        with:
+          # Forces the action to fetch Gluon's latest early-access/dev builds tracking modern JDK features
+          release: 'dev'
+
+      - name: Install Android Native Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
+
+      - name: Compile and Package Android APK
+        # The profile forces JavaFX 26 compilation target
+        run: mvn gluonfx:build gluonfx:package -Pandroid
+
+      - name: Upload Android Package Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: target/gluonfx/aarch64-android/gvm/*.apk
