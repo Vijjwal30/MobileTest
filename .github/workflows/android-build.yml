@@ -1,4 +1,4 @@
-name: Build Android App (Java 25 / JavaFX 26 - Maven)
+name: Build Android App (Gluon Certified Toolchain)
 
 on:
   push:
@@ -14,14 +14,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup GraalVM for Java 25
-        # This relies on the official GraalVM action to cleanly provision your JDK 25 environment
-        uses: graalvm/setup-graalvm@v1
+      - name: Setup Java 21 Tooling Environment
+        uses: actions/setup-java@v4
         with:
-          java-version: '25'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          java-version: '21'
+          distribution: 'temurin'
           cache: 'maven'
+
+      - name: Setup Official Gluon GraalVM
+        # Corrected action repository name
+        uses: gluonhq/setup-graalvm@v1
+        with:
+          # Pulls the exact custom GraalVM fork built specifically for mobile substrates
+          release: 'latest'
 
       - name: Install Android Native Dependencies
         run: |
@@ -29,8 +34,8 @@ jobs:
           sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
 
       - name: Compile and Package Android APK
-        # The build plugin handles substrate translation locally
-        run: mvn gluonfx:build gluonfx:package -Pandroid
+        # Runs clean compile inside the verified environment sandbox
+        run: mvn clean gluonfx:build gluonfx:package -Pandroid
 
       - name: Upload Android Package Artifact
         uses: actions/upload-artifact@v4
