@@ -2,6 +2,7 @@ package com.androidfx;
 
 import com.androidfx.components.BottomBar;
 import com.androidfx.components.Card;
+import com.androidfx.utilities.Backgrounds;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -34,7 +35,7 @@ public class App extends Application {
         root.getChildren().addAll(card,bottomBar);
         StackPane.setAlignment(bottomBar,Pos.BOTTOM_CENTER);
         StackPane.setMargin(button,new Insets(5));
-        root.setBackground(Background.fill(Color.IVORY));
+        root.setBackground(Backgrounds.fill(Color.IVORY));
         var scene = new Scene(root,screenWidth,screenHeight);
         stage.setScene(scene);
         stage.show();
