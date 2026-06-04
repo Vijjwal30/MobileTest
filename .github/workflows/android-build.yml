@@ -15,10 +15,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Official Gluon GraalVM
-        # Points directly to the master branch since Gluon doesn't use v1 tags
         uses: gluonhq/setup-graalvm@master
         with:
-          # Maps precisely to the internal API strings expected by Gluon Substrate
           graalvm: '22.1.0.1-Final'
           jdk: 'java17'
         env:
@@ -37,7 +35,9 @@ jobs:
           sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev
 
       - name: Compile and Package Android APK
-        # Forces the environment variables to align explicitly with the Android target architecture
+        # MAVEN_OPTS environment variable safely disables the broken container metrics check
+        env:
+          MAVEN_OPTS: "-Djdk.internal.platform.container=none"
         run: |
           export ANDROID_SDK=$ANDROID_HOME
           mvn clean gluonfx:build gluonfx:package -Pandroid
