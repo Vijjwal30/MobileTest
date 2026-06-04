@@ -14,18 +14,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Java 25 Environment
-        uses: actions/setup-java@v4
+      - name: Setup GraalVM for Java 25
+        # This relies on the official GraalVM action to cleanly provision your JDK 25 environment
+        uses: graalvm/setup-graalvm@v1
         with:
           java-version: '25'
-          distribution: 'oracle' # Fallback to standard Oracle OpenJDK for tooling environment
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
-
-      - name: Setup Gluon Mobile-Optimized GraalVM
-        uses: gluonhq/setup-gluon-graalvm@v1
-        with:
-          # Forces the action to fetch Gluon's latest early-access/dev builds tracking modern JDK features
-          release: 'dev'
 
       - name: Install Android Native Dependencies
         run: |
@@ -33,7 +29,7 @@ jobs:
           sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
 
       - name: Compile and Package Android APK
-        # The profile forces JavaFX 26 compilation target
+        # The build plugin handles substrate translation locally
         run: mvn gluonfx:build gluonfx:package -Pandroid
 
       - name: Upload Android Package Artifact
