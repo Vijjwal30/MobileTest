@@ -8,7 +8,8 @@ on:
 
 jobs:
   build-android:
-    runs-on: ubuntu-latest
+    # Downgrading to 20.04 uses cgroups v1, which completely prevents the NullPointerException
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout Code
