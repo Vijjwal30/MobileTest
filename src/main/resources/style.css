@@ -1,0 +1,8 @@
+.button{
+  -fx-background-color: orangered;
+  -fx-background-radius: 10;
+  transition: -fx-background-color 100ms ease-in-out;
+}
+.button:hover{
+  -fx-background-color: #f88a6b;
+}
