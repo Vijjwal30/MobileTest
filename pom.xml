@@ -35,6 +35,11 @@
             <artifactId>javafx-graphics</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.gluonhq.attach</groupId>
+            <artifactId>statusbar</artifactId>
+            <version>4.0.25</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -82,6 +87,7 @@
                         <arg>--release 23</arg>
                         <arg>-H:+UnlockExperimentalVMOptions</arg>
                     </runtimeArgs>
+                    <attachList>statusbar</attachList>
                 </configuration>
             </plugin>
 

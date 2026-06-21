@@ -21,6 +21,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import com.gluonhq.attach.statusbar.StatusBarService;
+
 public class App extends Application {
     double screenWidth = 300;
     double screenHeight = 600;
@@ -52,6 +54,14 @@ public class App extends Application {
         Rectangle rect = new Rectangle(80,60);
         rect.setArcWidth(20);
         rect.setArcHeight(20);
+
+        var statusBar = StatusBarService.create();
+        statusBar.ifPresent(
+                service->{
+                    service.setColor(Color.TRANSPARENT);
+                    service.setSystemBarsAppearance(StatusBarService.APPEARANCE.LIGHT, StatusBarService.APPEARANCE.LIGHT);
+                }
+        );
 
         TranslateTransition t = new TranslateTransition(Duration.millis(350),rect);
         t.setFromX(0);
