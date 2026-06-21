@@ -7,6 +7,7 @@ import com.androidfx.utilities.CubicBezier;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -57,16 +58,18 @@ public class App extends Application {
 
         Label statusLabel = new Label("Implemented statusbar successfully!");
 
-        var statusBar = StatusBarService.create();
-        statusBar.ifPresentOrElse(
-                service->{
-                    service.setColor(Color.TRANSPARENT);
-                    service.setSystemBarsAppearance(StatusBarService.APPEARANCE.LIGHT, StatusBarService.APPEARANCE.LIGHT);
-                },
-                ()->{
-                    statusLabel.setText("An error occurred!");
-                }
-        );
+        Platform.runLater(()->{
+            var statusBar = StatusBarService.create();
+            statusBar.ifPresentOrElse(
+                    service->{
+                        service.setColor(Color.TRANSPARENT);
+                        service.setSystemBarsAppearance(StatusBarService.APPEARANCE.LIGHT, StatusBarService.APPEARANCE.LIGHT);
+                    },
+                    ()->{
+                        statusLabel.setText("An error occurred!");
+                    }
+            );
+        });
 
         TranslateTransition t = new TranslateTransition(Duration.millis(350),rect);
         t.setFromX(0);
