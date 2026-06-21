@@ -55,7 +55,7 @@ public class App extends Application {
 
         TranslateTransition t = new TranslateTransition(Duration.millis(350),rect);
         t.setFromX(0);
-        t.setToX(150);
+        t.setToX(screenWidth-150);
         t.setInterpolator(new CubicBezier(0.42,1.67,0.21,0.9));
         t.setAutoReverse(true);
         t.setCycleCount(2);
