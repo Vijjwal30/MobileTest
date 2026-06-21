@@ -55,11 +55,16 @@ public class App extends Application {
         rect.setArcWidth(20);
         rect.setArcHeight(20);
 
+        Label statusLabel = new Label("Implemented statusbar successfully!");
+
         var statusBar = StatusBarService.create();
-        statusBar.ifPresent(
+        statusBar.ifPresentOrElse(
                 service->{
                     service.setColor(Color.TRANSPARENT);
                     service.setSystemBarsAppearance(StatusBarService.APPEARANCE.LIGHT, StatusBarService.APPEARANCE.LIGHT);
+                },
+                ()->{
+                    statusLabel.setText("An error occurred!");
                 }
         );
 
@@ -74,7 +79,7 @@ public class App extends Application {
         card.getChildren().addAll(actionButton,rect);
         card.setSpacing(10);
 
-        root.getChildren().addAll(card,bottomBar);
+        root.getChildren().addAll(card,statusLabel,bottomBar);
         StackPane.setAlignment(bottomBar,Pos.BOTTOM_CENTER);
         StackPane.setMargin(button,new Insets(5));
         root.setBackground(Backgrounds.fill(Color.IVORY));
