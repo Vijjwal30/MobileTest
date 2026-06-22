@@ -57,19 +57,6 @@ public class App extends Application {
         rect.setArcHeight(20);
 
 
-        Platform.runLater(()->{
-            var statusBar = StatusBarService.create();
-            statusBar.ifPresentOrElse(
-                    service->{
-                        service.setColor(Color.IVORY);
-                    },
-                    ()->{
-                        root.setBackground(Backgrounds.fill(Color.INDIANRED));
-            }
-            );
-        });
-
-
 
         TranslateTransition t = new TranslateTransition(Duration.millis(350),rect);
         t.setFromX(0);
