@@ -62,7 +62,6 @@ public class App extends Application {
             statusBar.ifPresentOrElse(
                     service->{
                         service.setColor(Color.IVORY);
-                        service.setSystemBarsAppearance(StatusBarService.APPEARANCE.LIGHT, StatusBarService.APPEARANCE.LIGHT);
                     },
                     ()->{
                         root.setBackground(Backgrounds.fill(Color.INDIANRED));
