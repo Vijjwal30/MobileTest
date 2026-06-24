@@ -4,7 +4,7 @@ import com.androidfx.components.BottomBar;
 import com.androidfx.components.Card;
 import com.androidfx.utilities.Backgrounds;
 import com.androidfx.utilities.CubicBezier;
-import javafx.animation.Interpolator;
+import com.gluonhq.attach.statusbar.StatusBarService;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -13,7 +13,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -22,7 +21,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import com.gluonhq.attach.statusbar.StatusBarService;
 
 public class App extends Application {
     double screenWidth = 300;
@@ -56,9 +54,7 @@ public class App extends Application {
         rect.setArcWidth(20);
         rect.setArcHeight(20);
 
-
-
-        TranslateTransition t = new TranslateTransition(Duration.millis(350),rect);
+        TranslateTransition t = new TranslateTransition(Duration.millis(650),rect);
         t.setFromX(0);
         t.setToX(screenWidth-150);
         t.setInterpolator(new CubicBezier(0.42,1.67,0.21,0.9));
@@ -74,6 +70,11 @@ public class App extends Application {
         StackPane.setMargin(button,new Insets(5));
         root.setBackground(Backgrounds.fill(Color.IVORY));
 
+        Platform.runLater(()->{
+            StatusBarService.create().ifPresent(
+                    ser->ser.setColor(Color.IVORY)
+            );
+        });
 
         var scene = new Scene(root,screenWidth,screenHeight);
         scene.getStylesheets().add(App.class.getResource("/style.css").toExternalForm());
