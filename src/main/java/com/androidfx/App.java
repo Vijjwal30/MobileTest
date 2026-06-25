@@ -75,8 +75,8 @@ public class App extends Application {
             StatusBarService.create().ifPresent(
                     ser->
                     {
-                        ser.setColor(Color.IVORY);
-                        ser.setSystemBarsAppearance(StatusBarService.APPEARANCE.DARK, StatusBarService.APPEARANCE.DARK);
+//                        ser.setColor(Color.IVORY);
+//                        ser.setSystemBarsAppearance(StatusBarService.APPEARANCE.DARK, StatusBarService.APPEARANCE.DARK);
                     });
         });
 
