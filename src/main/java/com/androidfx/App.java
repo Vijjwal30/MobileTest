@@ -60,6 +60,7 @@ public class App extends Application {
         t.setInterpolator(new CubicBezier(0.42,1.67,0.21,0.9));
         t.setAutoReverse(true);
         t.setCycleCount(2);
+        t.setDelay(Duration.seconds(0.1));
         actionButton.setOnAction(e->t.playFromStart());
 
         card.getChildren().addAll(actionButton,rect);
@@ -72,8 +73,11 @@ public class App extends Application {
 
         Platform.runLater(()->{
             StatusBarService.create().ifPresent(
-                    ser->ser.setColor(Color.IVORY)
-            );
+                    ser->
+                    {
+                        ser.setColor(Color.IVORY);
+                        ser.setSystemBarsAppearance(StatusBarService.APPEARANCE.DARK, StatusBarService.APPEARANCE.DARK);
+                    });
         });
 
         var scene = new Scene(root,screenWidth,screenHeight);
